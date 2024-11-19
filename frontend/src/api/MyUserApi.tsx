@@ -11,7 +11,6 @@ type CreateUserRequest = {
 export const useCreateMyUser = () => {
     const { getAccessTokenSilently } = useAuth0();
     
-
     const createMyUserRequest = async (user:CreateUserRequest) => {
         const accessToken = await getAccessTokenSilently();
 

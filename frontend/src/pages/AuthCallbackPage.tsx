@@ -22,4 +22,4 @@ const AuthCallbackPage = () => {
     return <>Loading...</>;
 };
 
-export default AuthCallbackPage
+export default AuthCallbackPage;
