@@ -5,11 +5,6 @@ const createCurrentUser = async (req: Request, res: Response): Promise<any> => {
     try {
         const { auth0Id, name, email } = req.body;
 
-        // Validate required fields
-        // if (!auth0Id) {
-        //     return res.status(400).json({ message: "auth0Id is required" });
-        // }
-
         // Check if user already exists
         const existingUser = await User.findOne({ auth0Id }).lean();
         if (existingUser) {
@@ -33,4 +28,27 @@ const createCurrentUser = async (req: Request, res: Response): Promise<any> => {
     }
 };
 
-export  {createCurrentUser};
+const updateCurrentUser = async (req: Request, res: Response): Promise<any> => {
+    try {
+        const { name, addressLane1, country, city } = req.body;
+        const user = await User.findById(req.userId);
+
+        if(!user) {
+            return res.status(404).json({ message: "User not found " })
+        }
+
+        user.name = name;
+        user.addressLane1 = addressLane1;
+        user.city = city;
+        user.country = country;
+
+        await user.save();
+
+        res.send(user);
+    } catch (e) {
+        console.log(e);
+        res.status(500).json({ message: "Error updating user" });
+    }
+}
+
+export  {createCurrentUser,updateCurrentUser};
