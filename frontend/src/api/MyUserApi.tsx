@@ -18,7 +18,7 @@ export const useCreateMyUser = () => {
             method: "POST",
             headers: {
                 Authorization: `Bearer ${accessToken}`,
-                "content-type" : "application/json",
+                "Content-Type": "application/json",
             },
             body: JSON.stringify(user),
         });
@@ -42,4 +42,58 @@ export const useCreateMyUser = () => {
         isSuccess,
     };
 
+};
+
+type updateMyUserRequest = {
+    name : string;
+    addressLane1 : string;
+    city : string;
+    country : string;
+}
+
+export const useUpdateMyUser = () => {
+    const { getAccessTokenSilently } = useAuth0();
+
+    const updateMyUserRequest = async (formData: updateMyUserRequest) => {
+        const accessToken = await getAccessTokenSilently();
+        // console.log("Access Token:", accessToken);
+        
+        const response = await fetch(`${API_BASE_URL}/api/my/user`, {
+            method:"PUT",
+            headers:{
+                Authorization:`Bearer ${accessToken}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),         
+        });
+
+        // console.log("Headers:", {
+        //     Authorization: `Bearer ${accessToken}`,
+        //     "Content-Type": "application/json",
+        // });
+        // console.log("Payload:", JSON.stringify(formData));
+        
+        // console.log(`${API_BASE_URL}/api/my/user`);
+
+        // console.log(formData);
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            console.error("API Error Response:", errorData);
+            throw new Error("Failed to update user");
+        }
+
+    };
+    
+    const { mutateAsync: updateUser, 
+        isLoading, 
+        isError, 
+        error 
+    } = useMutation(updateMyUserRequest);
+
+    if (isError) {
+        console.error("Mutation Error:", error);
+    }
+
+      return{ updateUser, isLoading };
 };
